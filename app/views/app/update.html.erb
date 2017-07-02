@@ -1,0 +1,121 @@
+<section class="breadcrumb">
+	<div class="container">
+		<h1> Edit App </h1>
+		<a href="/">
+			<span> Home </span>
+		</a>
+		<span> / </span>
+		<a href="/app/list">
+			<span> My Apps </span>
+		</a>
+		<span> / </span>
+		<span> Edit App </span>
+	</div>
+</section>
+
+<section class="form">
+	<div class="container">
+		<form class="form" method="post" action="/api/app/create" novalidate>
+			<input type="hidden" id="publish" name="publish" value="false">
+			<div class="form-group row control-group">
+				<div class="col-md-3 item">
+					Application Name <span class="text-danger"> * </span>
+				</div>
+				<div class="col-md-6 controls">
+					<input class="form-control" required data-validation-required-message="Please fill out this field", name="name">
+				</div>
+			</div>
+			<div class="form-group row control-group">
+				<div class="col-md-3 item">
+					Summary <span class="text-danger"> * </span>
+				</div>
+				<div class="col-md-6 controls">
+					<textarea class="form-control" required data-validation-required-message="Please fill out this field" name="summary"></textarea>
+				</div>
+			</div>
+			<div class="form-group row control-group">
+				<div class="col-md-3 item">
+					Description <span class="text-danger"> * </span>
+				</div>
+				<div class="col-md-6 controls">
+					<textarea class="form-control" id="description" required data-validation-required-message="Please fill out this field" name="description"></textarea>
+				</div>
+			</div>
+			<div class="form-group row control-group">
+				<div class="col-md-3 item">
+					Icon <span class="text-danger"> * </span>
+				</div>
+				<div class="col-md-6">
+					<div id="upload-icon" class="dropzone"> </div>
+				</div>
+				<div class="col-md-6 col-md-offset-3 controls">
+					<input type="input" id="icon" name="icon" class="hidden" value="" required data-validation-required-message="Please upload icon">
+				</div>
+			</div>
+			<div class="form-group row control-group">
+				<div class="col-md-3 item">
+					Images
+				</div>
+				<div class="col-md-6">
+					<div id="upload-images" class="dropzone">
+						<input type="input" id="images" name="images" class="hidden" value="">
+					</div>
+				</div>
+			</div>
+			<div class="form-group row control-group">
+				<div class="col-md-3 item">
+					Files
+				</div>
+				<div class="col-md-6">
+					<div id="upload-files" class="dropzone">
+						<input type="input" id="files" name="files" class="hidden" value="">
+					</div>
+				</div>
+			</div>
+			<div class="form-group row control-group">
+				<div class="col-md-3 item">
+					Category <span class="text-danger"> * </span>
+				</div>
+				<div class="col-md-6 controls">
+					<select class="form-control categorizer" multiple="multiple" required data-validation-required-message="Please select at least one", name="category">
+						<option> Autogiro </option>
+						<option> BokningsSystem </option>
+						<option> CRM </option>
+						<option> E-handel </option>
+					</select>
+				</div>
+			</div>
+			<div class="form-group row control-group">
+				<div class="col-md-3 item">
+					Website URL
+				</div>
+				<div class="col-md-6">
+					<input class="form-control" name="website_url">
+				</div>
+			</div>
+			<div class="form-group row control-group">
+				<div class="col-md-3 item">
+					Video URL
+				</div>
+				<div class="col-md-6">
+					<input class="form-control video-url" name="video_url">
+					<div class="video-preview"> </div>
+				</div>
+			</div>
+			<div class="form-group row control-group">
+				<div class="col-md-3"> </div>
+				<div class="col-md-6 controls">
+					<input type="checkbox" required data-validation-required-message="Please check this box if you want to proceed.">
+					<label> I agree to the terms and conditions. <span class="text-danger"> * </span> </label>
+				</div>
+			</div>
+			<div class="form-group row">
+				<div class="col-md-6 col-md-offset-3">
+					<button type="submit" class="btn btn-primary pull-right" onclick="bSubmit=false;">
+						Save Draft
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
+</section>
