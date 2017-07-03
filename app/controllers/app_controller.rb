@@ -1,25 +1,20 @@
 class AppController < ApplicationController
 
-	require 'net/http'
-require "uri"
-require "net/http"
-
-params = {'box1' => 'Nothing is less important than which fork you use. Etiquette is the science of living. It embraces everything. It is ethics. It is honor. -Emily Post',
-'button1' => 'Submit'
-}
-x = Net::HTTP.post_form(URI.parse('http://www.interlacken.com/webdbdev/ch05/formpost.asp'), params)
-puts x.body
 	def list
+		require 'net/http'
 
-		data = {}
-		url = URI.parse('https://sandbox.openchannel.io')
-		req = Net::HTTP::get.new(url.to_s, data)
-# url = URI.parse('http://www.example.com/index.html')
-# req = Net::HTTP::Get.new(url.to_s)
-# res = Net::HTTP.start(url.host, url.port) {|http|
-#   http.request(req)
-# }
-# puts res.body
+		url = URI.parse('https://sandbox-market.openchannel.io' + "/v2/apps/versions?developerId=1&query=" + '{$or: [{"status.value":"rejected",isLatestVersion:true},{isLive:true},{"status.value":{$in:["inDevelopment","inReview","pending"]}}]}')
+		http = Net::HTTP.new(url.host, url.port)
+		user = '5463cee5e4b042e3e26f1e41'
+		pass = 'E2lWmPmaADbXm3buLFr4vPa10FVm7M501XOtIMFjJBM'
+		auth = ActionController::HttpAuthentication::Basic.encode_credentials(user, pass)
+		req = Net::HTTP::Get.new(url.to_s, initheader = {'Content-Type' => 'application/json', 'Authorization' => auth})
+		http.use_ssl = true
+
+		res = Net::HTTP.start(url.host, url.port) {|https|
+			http.request(req)
+		}
+		puts res.body
 	end
 
 	def create
