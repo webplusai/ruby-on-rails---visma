@@ -27,12 +27,14 @@ function initializeCropperDropzone( selector, config ) {
         maxFiles: config.maxFiles,
         minWidth: config.minWidth,
         minHeight: config.minHeight,
+        headers: {
+            'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+        },
         init: function () {
             $(selector).append($(selector + ' .dz-preview').detach());
 
             // When file upload is completed
             this.on('success', function (file, response) {
-
                 // Hide spinner, enable the upload button and make the text from "Uploading" to original text ("Select a File" or "Select an Image").
                 $(selector + " .upload-btn .fa-spinner").addClass("hidden");
                 if (config.bFile)

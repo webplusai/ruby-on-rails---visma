@@ -6,15 +6,30 @@
 
     <%= stylesheet_link_tag 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' %>
     <%= stylesheet_link_tag 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css' %>
-    <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <%= stylesheet_link_tag 'application', media: 'all' %>
 
    	<%= javascript_include_tag 'https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js' %>
    	<%= javascript_include_tag 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js' %>
-    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_include_tag 'application' %>
 
   </head>
 
   <body>
     <%= yield %>
   </body>
+
+  <script>
+    <% if defined?(:app) %>
+      var app = '<%= @app %>';
+    <% end %>
+    <% if defined?(:statistics) %>
+      var statistics = '<%= @statistics %>';
+    <% end %>
+    <% if defined?(:toast_type) %>
+      var toast_type = '<%= @toast_type %>';
+    <% end %>
+    <% if defined?(:toast_message) %>
+      var toast_message = '<%= @toast_message %>';
+    <% end %>
+  </script>
 </html>

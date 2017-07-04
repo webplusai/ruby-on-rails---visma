@@ -31,8 +31,7 @@ function submitApp(obj, publish) {
 	$('form').submit();
 }
 
-$(document).ready(function() {
-
+function initialize() {
 	// Set toast message to be appeared on the top center position
 	// toastr.options = {
 	// 	'positionClass': 'toast-top-center'
@@ -138,29 +137,29 @@ $(document).ready(function() {
 	});
 
 	// Draw statistics flot graph
-	// if (statistics) {
+	if (statistics) {
+		var xaxis = [];
+		var month = (new Date()).getMonth();
 
-	// 	var xaxis = [];
-	// 	var month = (new Date()).getMonth();
+		for (i = 0; i < 13; i++) {
+			xaxis.push([ i, monthNames[month++ % 12] ]);
+		}
+		flotConfig.xaxis.ticks = xaxis;
+		stats = JSON.parse(statistics);
+		for(i = 0; i < stats.length; i++) {
+			stats[i][0] = i;
+		}
 
-	// 	for (i = 0; i < 13; i++) {
-	// 		xaxis.push([ i, monthNames[month++ % 12] ]);
-	// 	}
-	// 	flotConfig.xaxis.ticks = xaxis;
+		$("#plot").plot(
+			[
+				{
+					data: stats
+				},
+			], flotConfig
+		).data("plot");
+	}
+}
 
-	// 	statistics = JSON.parse(statistics);
-	// 	for(i = 0; i < statistics.length; i++) {
-	// 		statistics[i][0] = i;
-	// 	}
-
-	// 	$("#plot").plot(
-	// 		[
-	// 			{ 
-	// 				data: statistics
-	// 			},
-	// 		], flotConfig
-	// 	).data("plot");
-
-	// }
-
+$(document).ready(function() {
+	initialize();
 });

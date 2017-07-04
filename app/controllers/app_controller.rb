@@ -1,20 +1,29 @@
 class AppController < ApplicationController
 
-	def list
-		require 'net/http'
+	require 'net/http'
 
-		url = URI.parse('https://sandbox-market.openchannel.io' + "/v2/apps/versions?developerId=1&query=" + '{$or: [{"status.value":"rejected",isLatestVersion:true},{isLive:true},{"status.value":{$in:["inDevelopment","inReview","pending"]}}]}')
+	def list
+		url = URI.parse($base_url + "/v2/apps/versions?developerId=1&query=" + '{$or: [{"status.value":"rejected",isLatestVersion:true},{isLive:true},{"status.value":{$in:["inDevelopment","inReview","pending"]}}]}')
 		http = Net::HTTP.new(url.host, url.port)
-		user = '5463cee5e4b042e3e26f1e41'
-		pass = 'E2lWmPmaADbXm3buLFr4vPa10FVm7M501XOtIMFjJBM'
-		auth = ActionController::HttpAuthentication::Basic.encode_credentials(user, pass)
-		req = Net::HTTP::Get.new(url.to_s, initheader = {'Content-Type' => 'application/json', 'Authorization' => auth})
 		http.use_ssl = true
 
-		res = Net::HTTP.start(url.host, url.port) {|https|
+		req = Net::HTTP::Get.new(url.to_s, initheader = {'Content-Type' => 'application/json', 'Authorization' => $auth})
+		res = Net::HTTP.start(url.host, url.port) { |https|
 			http.request(req)
 		}
-		puts res.body
+		@apps = ActiveSupport::JSON.decode(res.body)['list']
+
+		url = URI.parse($base_url + '/v2/stats/series/month/views?query={developerId: "1"}');
+		req = Net::HTTP::Get.new(url.to_s, initheader = {'Content-Type' => 'application/json', 'Authorization' => $auth})
+		res = Net::HTTP.start(url.host, url.port) { |https| 
+			http.request(req)
+		}
+		@statistics = ActiveSupport::JSON.decode(res.body)
+
+		@views = 0
+		@statistics.each do |statistic|
+			@views += statistic[1]
+		end
 	end
 
 	def create

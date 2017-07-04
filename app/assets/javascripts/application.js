@@ -11,7 +11,7 @@
 // about supported directives.
 //
 //= require rails-ujs
-//= require turbolinks
+
 //= require cropper.min
 //= require dropzone
 //= require video-embed
@@ -22,3 +22,4 @@
 //= require tinymce/tinymce.min
 //= require toastr.min
 //= require scripts
+//= require config

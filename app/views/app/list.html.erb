@@ -6,9 +6,9 @@
 		</div>
 		<h1>
 			<i class="fa fa-search"> </i>
-			<span> 0 Views </span>
+			<span> <%= @views.to_i %> Views </span>
 		</h1>
-		<div id="plot">
+		<div id="plot"> </div>
 	</div>
 </section>
 
@@ -27,48 +27,236 @@
 		<div class="container">
 			<div class="card-group">
 				<div class="row">
-					<div class="col-md-6">
-						<div class="card">
-							<div class="card-overlay text-center">
-								<div class="card-overlay-panel">
-									<a class="btn btn-see-through" data-toggle="tooltip" title="Edit" href="/">
-										<i class="fa fa-pencil"> </i>
-									</a>
-									<a class="btn btn-see-through" data-toggle="tooltip" title="Publish">
-										<i class="fa fa-rocket"> </i>
-									</a>
-									<a class="btn btn-see-through" data-toggle="tooltip" title="Preview" href="/" target="_blank">
-										<i class="fa fa-search"> </i>
-									</a>
-									<a class="btn btn-see-through" data-toggle="tooltip" title="Delete">
-										<i class="fa fa-trash"> </i>
-									</a>
-								</div>
-							</div>
-							<div class="inDevelopment card-status text-center">
-								Draft
-							</div>
-							<div class="card-content">
-								<div class="row">
-									<div class="col-md-4">
-										<div class="card-image">
-											<img>
-										</div>
+					<% @apps.each do |app| %>
+						<div class="col-md-6">
+							<div class="card">
+								<div class="card-overlay text-center">
+									<div class="card-overlay-panel">
+										<a class="btn btn-see-through" data-toggle="tooltip" title="Edit" href="/app/update/<%= app['appId'] %>/<%= app['version'] %>">
+											<i class="fa fa-pencil"> </i>
+										</a>
+										<% if app['status']['value'] == 'inDevelopment' %>
+											<a class="btn btn-see-through" data-toggle="tooltip" title="Publish" onclick="showPublishDialog('<%= app['appId'] %>', '<%= app['version'] %>')">
+												<i class="fa fa-rocket"> </i>
+											</a>
+										<% end %>
+										<a class="btn btn-see-through" data-toggle="tooltip" title="Preview" href="http://visma-market.openchannel.io/details/<%= app['appId'] %>/<%= app['version'] %>" target="_blank">
+											<i class="fa fa-search"> </i>
+										</a>
+										<% if app['status']['value'] == 'approved' %>
+											<% if app['parent']['status']['value'] == 'approved' %>
+												<a class="btn btn-see-through" data-toggle="tooltip" title="Suspend" onclick="showSuspendDialog('<%= app['appId'] %>', 'suspend')">
+													<i class="fa fa-pause"> </i>
+												</a>
+											<% elsif app['parent']['status']['value'] == 'suspended' && app['parent']['status']['modifiedBy'] == 'developer' %>
+												<a class="btn btn-see-through" data-toggle="tooltip" title="Unsuspend" onclick="showSuspendDialog('<%= app['appId'] %>', 'unsuspend')">
+													<i class="fa fa-play"> </i>
+												</a>
+											<% end %>
+										<% end %>
+										<a class="btn btn-see-through" data-toggle="tooltip" title="Delete" onclick="showDeleteDialog('<%= app['appId'] %>', '<%= app['version'] %>', '<%= app['status']['value'] %>')">
+											<i class="fa fa-trash"> </i>
+										</a>
 									</div>
-									<div class="col-md-8">
-										<div class="card-title">
-											Card Title
+								</div>
+								<% if app['status']['value'] == 'approved' %>
+									<div class="<%= app['parent']['status']['value'] %> card-status text-center">
+										<% if app['parent']['status']['value'] == 'approved' %>
+											<span> Approved </span>
+										<% else %>
+											<span> Suspended </span>
+										<% end %>
+									</div>
+								<% else %>
+									<div class="<%= app['status']['value'] %> card-status text-center">
+										<% case app['status']['value']
+											when 'inDevelopment' %>
+											<span> Draft </span>
+										<% when 'inReview' %>
+											<span> In Review </span>
+										<% when 'pending' %>
+											<span> Pending Approval </span>
+										<% when 'suspended' %>
+											<span> Suspended </span>
+										<% when 'rejected' %>
+											<span> Rejected </span>
+										<% end %>
+									</div>
+								<% end %>
+								<div class="card-content">
+									<div class="row">
+										<div class="col-md-4">
+											<div class="card-image">
+												<img src="<%= app['customData']['icon'] %>">
+											</div>
 										</div>
-										<div class="card-summary">
-											Card Summary
+										<div class="col-md-8">
+											<div class="card-title">
+												<%= app['name'] %>
+											</div>
+											<div class="card-summary">
+												<%= app['customData']['summary'] %>
+											</div>
 										</div>
 									</div>
 								</div>
 							</div>
 						</div>
-					</div>
+					<% end %>
 				</div>
 			</div>
 		</div>
 	</div>
 </section>
+
+<script type="text/javascript">
+	function showPublishDialog(appId, version) {
+		var modal =
+			'<div id="modal_publish" class="modal fade" role="dialog">' +
+			'	<div class="modal-dialog">' + 
+			'		<div class="modal-content">' + 
+			'			<div class="modal-header">' +
+			'				<button class="close" data-dismiss="modal"> &times; </button>' +
+			'				<h4 class="modal-title"> Publish App? </h4>' +
+			'			</div>' +
+			'			<div class="modal-body">' +
+			'				<p> Are you sure that you want to publish this app to the marketplace? </p>' +
+			'			</div>' +
+			'			<div class="modal-footer">' +
+			'				<button class="btn btn-default" data-dismiss="modal"> Cancel </button>' +
+			'				<button class="btn btn-success" onclick="publishApp(this, \'' + appId + '\', \'' + version + '\')"> <i class="fa fa-spinner hidden"> </i> Publish </button>' +
+			'			</div>' +
+			'		</div>' +
+			'	</div>' +
+			'</div>';
+
+		$(modal).modal();
+	}
+
+	function showSuspendDialog(appId, status) {
+		var modal =
+			'<div id="modal_suspend" class="modal fade" role="dialog">' +
+			'	<div class="modal-dialog">' + 
+			'		<div class="modal-content">' + 
+			'			<div class="modal-header">' +
+			'				<button class="close" data-dismiss="modal"> &times; </button>';
+
+		if (status == 'suspend')
+			modal += '	<h4 class="modal-title"> Suspend App? </h4>';
+		else
+			modal += '	<h4 class="modal-title"> Unsuspend App? </h4>';
+
+		modal += '	</div>' +
+				'	<div class="modal-body">';
+
+		if (status == 'suspend')
+			modal += '	<p> Are you sure that you want to suspend this app in the marketplace? </p>' +
+					'	<p><strong>Warning:</strong> This app listing will be hidden from users on the marketplace.</p>';
+		else
+			modal += '	<p> Are you sure that you want to resume offering this app in the marketplace? </p>';
+
+		modal += '	</div>' +
+			'			<div class="modal-footer">' +
+			'				<button class="btn btn-default" data-dismiss="modal"> Cancel </button>';
+
+		if (status == 'suspend')
+			modal += '	<button class="btn btn-warning" onclick="suspendApp(this, \'' + appId + '\', \'' + status + '\')"> <i class="fa fa-spinner hidden"> </i> Suspend </button>';
+		else
+			modal += '	<button class="btn btn-success" onclick="suspendApp(this, \'' + appId + '\', \'' + status + '\')"> <i class="fa fa-spinner hidden"> </i> Unsuspend </button>';
+
+		modal += '	</div>' +
+			'		</div>' +
+			'	</div>' +
+			'</div>';
+
+		$(modal).modal();
+	}
+
+	function showDeleteDialog(appId, version, status) {
+		var modal =
+			'<div id="modal_delete" class="modal fade" role="dialog">' +
+			'	<div class="modal-dialog">' + 
+			'		<div class="modal-content">' + 
+			'			<div class="modal-header">' +
+			'				<button class="close" data-dismiss="modal"> &times; </button>';
+
+		if (status == 'approved')
+			modal += '	<h4 class="modal-title"> Delete App? </h4>';
+		else
+			modal += '	<h4 class="modal-title"> Delete Version? </h4>';
+
+		modal += '	</div>' +
+			'			<div class="modal-body">';
+
+		if (status == 'approved')
+			modal +='	<p> Are you sure that you want to delete this app? </p>' + 
+					'	<p><strong>Warning:</strong> This will completely delete all versions of this app including drafts and pending versions.</p>';
+		else {
+			var version_string = '';
+
+			switch (status) {
+				case 'inDevelopment':
+					version_string = 'Draft';
+					break;
+				case 'inReview':
+					version_string = 'In Review';
+					break;
+				case 'pending':
+					version_string = 'Pending Approval';
+					break;
+				case 'rejected':
+					version_string = 'Rejected';
+					break;
+			}
+			modal +='	<p> Are you sure that you want to delete this ' +  version_string + ' version of app? </p>';
+		}
+
+		modal +=  '	</div>' +
+			'			<div class="modal-footer">' +
+			'				<button class="btn btn-default" data-dismiss="modal"> Cancel </button>';
+		if (status == 'approved')
+			modal += '		<button class="btn btn-danger" onclick="deleteApp(this, \'' + appId + '\')"> <i class="fa fa-spinner hidden"> </i> Delete </button>';
+		else
+			modal += '		<button class="btn btn-danger" onclick="deleteApp(this, \'' + appId + '\', \'' + version + '\')"> <i class="fa fa-spinner hidden"> </i> Delete </button>';
+
+		modal += '		</div>' +
+			'		</div>' +
+			'	</div>' +
+			'</div>';
+
+		$(modal).modal();
+	}
+
+	function publishApp(obj, appId, version) {
+		$(obj).prop('disabled', true);
+		$(obj).find('.fa-spinner').removeClass('hidden');
+		$.post('/api/app/publish', {
+			version: version,
+			appId: appId
+		}, function(response) {
+			location.reload();
+		});
+	}
+
+	function deleteApp(obj, appId, version) {
+		$(obj).prop('disabled', true);
+		$(obj).find('.fa-spinner').removeClass('hidden');
+		$.post('/api/app/delete', {
+			version: version,
+			appId: appId
+		}, function(response) {
+			location.reload();
+		});
+	}
+
+	function suspendApp(obj, appId, status) {
+		$(obj).prop('disabled', true);
+		$(obj).find('.fa-spinner').removeClass('hidden');
+		$.post('/api/app/status', {
+			appId: appId,
+			status: status
+		}, function(response) {
+			location.reload();
+		});
+	}
+</script>
