@@ -8,7 +8,25 @@ class Api::AppController < ApplicationController
 	end
 
 	def create
-		puts "AAA"
+
+		body = {
+			'developerId' => $developer_id,
+			'name' => params[:name],
+			'customData' => params
+		}
+
+		url = URI.parse($base_url + '/v2/apps')
+		http = Net::HTTP.new(url.host, url.port)
+		http.use_ssl = true
+
+		req = Net::HTTP::Post.new(url.to_s, initheader = {'Content-Type' => 'application/json', 'Authorization' => $auth})
+		req.body = ActiveSupport::JSON.encode(body)
+		res = Net::HTTP.start(url.host, url.port) { |https|
+			http.request(req)
+		}
+
+		redirect_to '/app/list'
+		puts res.body
 	end
 
 	def update
