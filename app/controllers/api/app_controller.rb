@@ -25,8 +25,24 @@ class Api::AppController < ApplicationController
 			http.request(req)
 		}
 
+		res = ActiveSupport::JSON.decode(res.body);
+
+		if params[:publish] = 'true'
+			body = {
+				'developerId' => $developer_id,
+				'version' => res['version']
+			}
+			url = URI.parse($base_url + '/v2/apps/' + res['appId'] + '/publish')
+			req = Net::HTTP::Post.new(url.to_s, initheader = {'Content-Type' => 'application/json', 'Authorization' => $auth})
+			req.body = ActiveSupport::JSON.encode(body)
+			res = Net::HTTP.start(url.host, url.port) { |https|
+				http.request(req)
+			}
+
+			puts res.body
+		end
+
 		redirect_to '/app/list'
-		puts res.body
 	end
 
 	def update
