@@ -15,14 +15,15 @@
 
 <section class="form">
 	<div class="container">
-		<form class="form" method="post" action="/api/app/create" novalidate>
+		<form class="form" method="post" action="/api/app/update" novalidate>
 			<input type="hidden" id="publish" name="publish" value="false">
+			<%= hidden_field_tag :authenticity_token, form_authenticity_token %>
 			<div class="form-group row control-group">
 				<div class="col-md-3 item">
 					Application Name <span class="text-danger"> * </span>
 				</div>
 				<div class="col-md-6 controls">
-					<input class="form-control" required data-validation-required-message="Please fill out this field", name="name">
+					<input class="form-control" required data-validation-required-message="Please fill out this field", name="name" value="<%= @app['name'] %>">
 				</div>
 			</div>
 			<div class="form-group row control-group">
@@ -30,7 +31,7 @@
 					Summary <span class="text-danger"> * </span>
 				</div>
 				<div class="col-md-6 controls">
-					<textarea class="form-control" required data-validation-required-message="Please fill out this field" name="summary"></textarea>
+					<textarea class="form-control" required data-validation-required-message="Please fill out this field" name="summary"><%= @app['customData']['summary'] %></textarea>
 				</div>
 			</div>
 			<div class="form-group row control-group">
@@ -38,18 +39,34 @@
 					Description <span class="text-danger"> * </span>
 				</div>
 				<div class="col-md-6 controls">
-					<textarea class="form-control" id="description" required data-validation-required-message="Please fill out this field" name="description"></textarea>
+					<textarea class="form-control" id="description" required data-validation-required-message="Please fill out this field" name="description"><%= @app['customData']['description'] %></textarea>
 				</div>
 			</div>
 			<div class="form-group row control-group">
 				<div class="col-md-3 item">
 					Icon <span class="text-danger"> * </span>
 				</div>
-				<div class="col-md-6">
-					<div id="upload-icon" class="dropzone"> </div>
+				<div class="col-md-6 controls">
+					<div id="upload-icon" class="dropzone">
+						<% if @app['customData']['icon'] != nil %>
+							<div class="dz-preview dz-processing dz-image-preview dz-success dz-complete">
+								<div class="dz-image">
+									<img data-dz-thumbnail, src="<%= @app['customData']['icon'] %>">
+								</div>
+								<div class="dz-progress">
+									<span class="dz-upload completed" data-dz-uploadprogress style="width: 100%">
+										Complete
+									</span>
+								</div>
+								<a class="dz-remove" href="javascript:void(0)" data-dz-remove onclick="removeFile(this, '#icon', '<%= @app['customData']['icon'] %>'">
+									<i class="fa fa-trash"> </i>
+								</a>
+							</div>
+						<% end %>
+					</div>
 				</div>
 				<div class="col-md-6 col-md-offset-3 controls">
-					<input type="input" id="icon" name="icon" class="hidden" value="" required data-validation-required-message="Please upload icon">
+					<input type="input" id="icon" name="icon" class="hidden" value="<%= @app['customData']['icon'] %>" required data-validation-required-message="Please upload icon">
 				</div>
 			</div>
 			<div class="form-group row control-group">
@@ -59,6 +76,26 @@
 				<div class="col-md-6">
 					<div id="upload-images" class="dropzone">
 						<input type="input" id="images" name="images" class="hidden" value="">
+						<% 	if defined?(@app['customData']['imageList'])
+								@app['customData']['imageList'].each do |image|
+						%>
+							<div class="dz-preview dz-processing dz-image-preview dz-success dz-complete">
+								<div class="dz-image">
+									<img data-dz-thumbnail src="<%= image %>">
+								</div>
+								<div class="dz-progress">
+									<span class="dz-upload completed" data-dz-uploadprogress style="width: 100%">
+										Complete
+									</span>
+								</div>
+								<a class="dz-remove" href="javascript:void(0)" data-dz-remopve onclick="removeFile(this, '#images', '<%= image %>')">
+									<i class="fa fa-trash"> </i>
+								</a>
+							</div>
+						<% 	
+								end 
+							end
+						%>
 					</div>
 				</div>
 			</div>
@@ -69,6 +106,26 @@
 				<div class="col-md-6">
 					<div id="upload-files" class="dropzone">
 						<input type="input" id="files" name="files" class="hidden" value="">
+						<% 	if defined?(@app['customData']['fileList']) 
+								@app['customData']['fileList'].each do |file|
+						%>
+							<div class="dz-preview dz-processing dz-image-preview dz-success dz-complete">
+								<div class="dz-image">
+									<i class="fa fa-file"> </i>
+								</div>
+								<div class="dz-progress">
+									<span class="dz-upload completed" data-dz-uploadprogress style="width: 100%">
+										Complete
+									</span>
+								</div>
+								<a class="dz-remove" href="javascript:void(0)" data-dz-remove onclick="removeFile(this, '#files', '<%= file %>')">
+									<i class="fa fa-trash"> </i>
+								</a>
+							</div>
+						<% 
+								end
+							end
+						%>
 					</div>
 				</div>
 			</div>
@@ -78,10 +135,10 @@
 				</div>
 				<div class="col-md-6 controls">
 					<select class="form-control categorizer" multiple="multiple" required data-validation-required-message="Please select at least one", name="category">
-						<option> Autogiro </option>
-						<option> BokningsSystem </option>
-						<option> CRM </option>
-						<option> E-handel </option>
+						<option <%= @app['customData']['category'].index('Autogiro') != nil ? 'selected' : '' %>> Autogiro </option>
+						<option <%= @app['customData']['category'].index('BokningsSystem') != nil ? 'selected' : '' %>> BokningsSystem </option>
+						<option <%= @app['customData']['category'].index('CRM') != nil ? 'selected' : '' %>> CRM </option>
+						<option <%= @app['customData']['category'].index('E-handel') != nil ? 'selected' : '' %>> E-handel </option>
 					</select>
 				</div>
 			</div>
@@ -90,7 +147,7 @@
 					Website URL
 				</div>
 				<div class="col-md-6">
-					<input class="form-control" name="website_url">
+					<input class="form-control" name="website_url" value="<%= @app['customData']['website_url'] %>">
 				</div>
 			</div>
 			<div class="form-group row control-group">
@@ -98,21 +155,14 @@
 					Video URL
 				</div>
 				<div class="col-md-6">
-					<input class="form-control video-url" name="video_url">
+					<input class="form-control video-url" name="video_url" value="<%= @app['customData']['video_url'] %>">
 					<div class="video-preview"> </div>
-				</div>
-			</div>
-			<div class="form-group row control-group">
-				<div class="col-md-3"> </div>
-				<div class="col-md-6 controls">
-					<input type="checkbox" required data-validation-required-message="Please check this box if you want to proceed.">
-					<label> I agree to the terms and conditions. <span class="text-danger"> * </span> </label>
 				</div>
 			</div>
 			<div class="form-group row">
 				<div class="col-md-6 col-md-offset-3">
 					<button type="submit" class="btn btn-primary pull-right" onclick="bSubmit=false;">
-						Save Draft
+						Save
 					</button>
 				</div>
 			</div>

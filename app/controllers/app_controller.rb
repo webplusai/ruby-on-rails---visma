@@ -31,6 +31,22 @@ class AppController < ApplicationController
 	end
 
 	def update
+		url = URI.parse($base_url + '/v2/apps/' + params[:appId] + '/versions/' + params[:version] + '?developerId=' + $developer_id)
+		http = Net::HTTP.new(url.host, url.port)
+		http.use_ssl = true
 
+		req = Net::HTTP::Get.new(url.to_s, initheader = {'Authorization' => $auth})
+		res = Net::HTTP.start(url.host, url.port) { |https|
+			http.request(req)
+		}
+
+		@app = ActiveSupport::JSON.decode(res.body)
+
+		if ( @app['customData']['files'] )
+			@app['customData']['fileList'] = @app['customData']['files'].split(',')
+		end
+		if ( @app['customData']['images'] )
+			@app['customData']['imageList'] = @app['customData']['images'].split(',')
+		end
 	end
 end
