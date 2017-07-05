@@ -10,5 +10,6 @@ Rails.application.routes.draw do
     post 'app/update/:appId/:version' => 'app#update'
     post 'upload' => 'app#upload'
     post 'app/delete'
+    post 'app/publish'
   end
 end

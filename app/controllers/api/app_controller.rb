@@ -49,8 +49,22 @@ class Api::AppController < ApplicationController
 
 	end
 
-	def show
+	def publish
+		body = {
+			'developerId' => $developer_id,
+			'version' => params[:version].to_i
+		}
+		url = URI.parse($base_url + '/v2/apps/' + params[:appId] + '/publish')
+		http = Net::HTTP.new(url.host, url.port)
+		http.use_ssl = true
 
+		req = Net::HTTP::Post.new(url.to_s, initheader = {'Content-Type' => 'application/json', 'Authorization' => $auth})
+		req.body = ActiveSupport::JSON.encode(body)
+		res = Net::HTTP.start(url.host, url.port) { |https|
+			http.request(req)
+		}
+
+		puts res.body
 	end
 
 	def delete
