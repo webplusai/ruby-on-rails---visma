@@ -19,6 +19,24 @@ class Api::AppController < ApplicationController
 
 	end
 
+	def delete
+		if params[:version] != nil
+			url = URI.parse($base_url + '/v2/apps/' + params[:appId] + '/versions/' + params[:version].to_s + '?developerId=' + $developer_id)
+		else
+			url = URI.parse($base_url + '/v2/apps/' + params[:appId] + '?developerId=' + $developer_id)
+		end
+
+		http = Net::HTTP.new(url.host, url.port)
+		http.use_ssl = true
+
+		req = Net::HTTP::Delete.new(url.to_s, initheader = {'Content-Type' => 'application/json', 'Authorization' => $auth})
+		res = Net::HTTP.start(url.host, url.port) { |https|
+			http.request(req)
+		}
+
+		puts res.body
+	end
+
 	def upload
 		file = params[:file]
 

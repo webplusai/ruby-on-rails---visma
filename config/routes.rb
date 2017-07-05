@@ -6,8 +6,9 @@ Rails.application.routes.draw do
 
   namespace :api do
   	post 'app/list'
-	post 'app/create'
-	post 'app/update/:appId/:version' => 'app#update'
-	post 'upload' => 'app#upload'
+    post 'app/create'
+    post 'app/update/:appId/:version' => 'app#update'
+    post 'upload' => 'app#upload'
+    post 'app/delete'
   end
 end
