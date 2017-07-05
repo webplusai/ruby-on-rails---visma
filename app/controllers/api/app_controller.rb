@@ -45,10 +45,6 @@ class Api::AppController < ApplicationController
 		redirect_to '/app/list'
 	end
 
-	def update
-
-	end
-
 	def publish
 		body = {
 			'developerId' => $developer_id,
@@ -85,24 +81,30 @@ class Api::AppController < ApplicationController
 		puts res.body
 	end
 
+	def status
+		body = {
+			'developerId' => $developer_id,
+			'status' => params[:status]
+		}
+
+		url = URI.parse($base_url + '/v2/apps/' + params[:appId] + '/status')
+		http = Net::HTTP.new(url.host, url.port)
+		http.use_ssl = true
+
+		req = Net::HTTP::Post.new(url.to_s, initheader = {'Content-Type' => 'application/json', 'Authorization' => $auth})
+		req.body = ActiveSupport::JSON.encode(body)
+		res = Net::HTTP.start(url.host, url.port) { |https|
+			http.request(req)
+		}
+
+		puts res.body
+	end
+
 	def upload
 		file = params[:file]
 
 		result = ActiveSupport::JSON.decode( RestClient.post($base_url + '/v2/files', { :file => File.new(file.path) }, { :Authorization => $auth }) )
 		render :plain => result['fileUrl']
-		
-		# url = URI.parse($base_url + '/v2/files')
-		# http = Net::HTTP.new(url.host, url.port)
-		# http.use_ssl = true
-
-		# req = Net::HTTP::Post.new(url.to_s, initheader={'Content-Type' => 'multipart/form-data', 'Authorization' => $auth})
-		# req.body = File.new(file.path)
-
-		# #puts File.new(file.path)
-
-		# res = Net::HTTP.start(url.host, url.port) { |http|
-		# 	http.request(req);
-		# }
 
 	end
 end
