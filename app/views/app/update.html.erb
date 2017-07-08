@@ -17,6 +17,8 @@
 	<div class="container">
 		<form class="form" method="post" action="/api/app/update" novalidate>
 			<input type="hidden" id="publish" name="publish" value="false">
+			<input type="hidden" id="appId" name="appId" value="<%= @app['appId'] %>">
+			<input type="hidden" id="version" name="version" value="<%= @app['version'] %>">
 			<%= hidden_field_tag :authenticity_token, form_authenticity_token %>
 			<div class="form-group row control-group">
 				<div class="col-md-3 item">
@@ -75,7 +77,7 @@
 				</div>
 				<div class="col-md-6">
 					<div id="upload-images" class="dropzone">
-						<input type="input" id="images" name="images" class="hidden" value="">
+						<input type="input" id="images" name="images" class="hidden" value="<%= @app['customData']['images'] %>">
 						<% 	if defined?(@app['customData']['imageList'])
 								@app['customData']['imageList'].each do |image|
 						%>
@@ -105,7 +107,7 @@
 				</div>
 				<div class="col-md-6">
 					<div id="upload-files" class="dropzone">
-						<input type="input" id="files" name="files" class="hidden" value="">
+						<input type="input" id="files" name="files" class="hidden" value="<%= @app['customData']['files'] %>">
 						<% 	if defined?(@app['customData']['fileList']) 
 								@app['customData']['fileList'].each do |file|
 						%>
@@ -134,7 +136,7 @@
 					Category <span class="text-danger"> * </span>
 				</div>
 				<div class="col-md-6 controls">
-					<select class="form-control categorizer" multiple="multiple" required data-validation-required-message="Please select at least one", name="category">
+					<select class="form-control categorizer" multiple="multiple" required data-validation-required-message="Please select at least one", name="category[]" value="<%= @app['customData']['category'] %>">
 						<option <%= @app['customData']['category'].index('Autogiro') != nil ? 'selected' : '' %>> Autogiro </option>
 						<option <%= @app['customData']['category'].index('BokningsSystem') != nil ? 'selected' : '' %>> BokningsSystem </option>
 						<option <%= @app['customData']['category'].index('CRM') != nil ? 'selected' : '' %>> CRM </option>

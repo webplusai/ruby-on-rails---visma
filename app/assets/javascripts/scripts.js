@@ -97,7 +97,7 @@ function initialize() {
 	$("form").find("input,select,textarea").not("[type='submit']").jqBootstrapValidation({ 
 		preventSubmit: true,
 		submitSuccess: function() {
-			if (app) {
+			if (app != 'null') {
 				var status = JSON.parse(app).status.value;
 
 				// If app status is pending, submit the form without publish modal dialog.

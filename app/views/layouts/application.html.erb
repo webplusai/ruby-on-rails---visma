@@ -20,7 +20,7 @@
 
   <script>
     <% if defined?(:app) %>
-      var app = '<%= @app %>';
+      var app = '<%= @app.to_json.html_safe %>';
     <% end %>
     <% if defined?(:statistics) %>
       var statistics = '<%= @statistics %>';
