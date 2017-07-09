@@ -109,6 +109,7 @@ class Api::AppController < ApplicationController
 
 			session[:toast_type] = 'publish';
 			redirect_to '/app/list'
+			return
 		end
 
 		session[:toast_type] = 'update';
