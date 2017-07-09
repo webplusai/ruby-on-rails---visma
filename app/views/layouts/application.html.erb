@@ -25,11 +25,13 @@
     <% if defined?(:statistics) %>
       var statistics = '<%= @statistics %>';
     <% end %>
-    <% if defined?(:toast_type) %>
-      var toast_type = '<%= @toast_type %>';
+    <% if defined?(session[:toast_type]) %>
+      var toast_type = '<%= session[:toast_type] %>';
+      <% session[:toast_type] = '' %>
     <% end %>
-    <% if defined?(:toast_message) %>
-      var toast_message = '<%= @toast_message %>';
+    <% if defined?(session[:toast_message]) %>
+      var toast_message = '<%= session[:toast_message] %>';
+      <% session[:toast_message] = '' %>
     <% end %>
   </script>
 </html>

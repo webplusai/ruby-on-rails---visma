@@ -33,24 +33,24 @@ function submitApp(obj, publish) {
 
 function initialize() {
 	// Set toast message to be appeared on the top center position
-	// toastr.options = {
-	// 	'positionClass': 'toast-top-center'
-	// }
+	toastr.options = {
+		'positionClass': 'toast-top-center'
+	}
 	
 	// Display toast message according to various cases
-	// if (toast_type == 'error') {
-	// 	toastr.error(toast_message);
-	// } else if (toast_type == 'status') {
-	// 	toastr.success(toast_message);
-	// } else if (toast_type == 'create') {
-	// 	toastr.success('Your draft has been saved');
-	// } else if (toast_type == 'update') {
-	// 	toastr.success('Your changes have been saved');
-	// } else if (toast_type == 'delete') {
-	// 	toastr.success('App version deleted successfully');
-	// } else if (toast_type == 'publish') {
-	// 	toastr.success('Your app has been submitted and is pending approval');
-	// }
+	if (toast_type == 'error') {
+		toastr.error(toast_message);
+	} else if (toast_type == 'status') {
+		toastr.success(toast_message);
+	} else if (toast_type == 'create') {
+		toastr.success('Your draft has been saved');
+	} else if (toast_type == 'update') {
+		toastr.success('Your changes have been saved');
+	} else if (toast_type == 'delete') {
+		toastr.success('App version deleted successfully');
+	} else if (toast_type == 'publish') {
+		toastr.success('Your app has been submitted and is pending approval');
+	}
 
 	// Initialize dropzones
 	initializeCropperDropzone("#upload-icon", {

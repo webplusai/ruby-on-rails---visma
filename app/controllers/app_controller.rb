@@ -48,5 +48,17 @@ class AppController < ApplicationController
 		if ( @app['customData']['images'] )
 			@app['customData']['imageList'] = @app['customData']['images'].split(',')
 		end
+
+		url = URI.parse($base_url + '/v2/stats/series/month/views?query={developerId: "1", appId: "' + @app['appId'].to_s + '"}');
+		req = Net::HTTP::Get.new(url.to_s, initheader = {'Content-Type' => 'application/json', 'Authorization' => $auth})
+		res = Net::HTTP.start(url.host, url.port) { |https| 
+			http.request(req)
+		}
+		@statistics = ActiveSupport::JSON.decode(res.body)
+
+		@views = 0
+		@statistics.each do |statistic|
+			@views += statistic[1]
+		end
 	end
 end

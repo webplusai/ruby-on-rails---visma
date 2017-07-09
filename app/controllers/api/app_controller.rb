@@ -39,9 +39,11 @@ class Api::AppController < ApplicationController
 				http.request(req)
 			}
 
-			puts res.body
+			session[:toast_type] = 'publish';
+			redirect_to '/app/list'
 		end
 
+		session[:toast_type] = 'create';
 		redirect_to '/app/list'
 	end
 
@@ -77,8 +79,12 @@ class Api::AppController < ApplicationController
 			res = Net::HTTP.start(url.host, url.port) { |https|
 				http.request(req)
 			}
+
+			session[:toast_type] = 'publish';
+			redirect_to '/app/list'
 		end
 
+		session[:toast_type] = 'update';
 		redirect_to '/app/list'
 	end
 
@@ -97,7 +103,7 @@ class Api::AppController < ApplicationController
 			http.request(req)
 		}
 
-		puts res.body
+		session[:toast_type] = 'publish';
 	end
 
 	def delete
@@ -115,7 +121,7 @@ class Api::AppController < ApplicationController
 			http.request(req)
 		}
 
-		puts res.body
+		session[:toast_type] = 'delete';
 	end
 
 	def status
@@ -134,7 +140,8 @@ class Api::AppController < ApplicationController
 			http.request(req)
 		}
 
-		puts res.body
+		session[:toast_type] = 'status'
+		session[:toast_message] = 'App ' + params[:status] + 'ed successfully'
 	end
 
 	def upload

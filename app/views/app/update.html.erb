@@ -15,6 +15,11 @@
 
 <section class="form">
 	<div class="container">
+		<h1>
+			<i class="fa fa-search"> </i>
+			<span> <%= @views.to_i %> Views </span>
+		</h1>
+		<div id="plot"> </div>
 		<form class="form" method="post" action="/api/app/update" novalidate>
 			<input type="hidden" id="publish" name="publish" value="false">
 			<input type="hidden" id="appId" name="appId" value="<%= @app['appId'] %>">
@@ -60,7 +65,7 @@
 										Complete
 									</span>
 								</div>
-								<a class="dz-remove" href="javascript:void(0)" data-dz-remove onclick="removeFile(this, '#icon', '<%= @app['customData']['icon'] %>'">
+								<a class="dz-remove" href="javascript:void(0)" data-dz-remove onclick="removeFile(this, '#icon', '<%= @app['customData']['icon'] %>')">
 									<i class="fa fa-trash"> </i>
 								</a>
 							</div>
@@ -171,3 +176,13 @@
 		</form>
 	</div>
 </section>
+
+<script type="text/javascript">
+	// Remove file from dropzone preview area
+	function removeFile(obj, selector, fileName) {
+		$(selector).val($(selector).val().replace(',' + fileName, ''));
+		$(selector).val($(selector).val().replace(fileName + ',', ''));
+		$(selector).val($(selector).val().replace(fileName, ''));
+		$(obj).parent().remove();
+	}
+</script>
