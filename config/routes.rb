@@ -3,6 +3,9 @@ Rails.application.routes.draw do
   get 'app/list'
   get 'app/create'
   get 'app/update/:appId/:version' => 'app#update'
+  
+  get '/' => redirect('app/list')
+  get '*path' => redirect('app/list')
 
   namespace :api do
   	post 'app/list'

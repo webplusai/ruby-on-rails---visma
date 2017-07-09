@@ -26,6 +26,13 @@ class Api::AppController < ApplicationController
 		}
 
 		res = ActiveSupport::JSON.decode(res.body)
+		
+		if res['code'] != nil
+			session[:toast_type] = 'error'
+			session[:toast_message] = res['errors'][0]['message']
+			redirect_to '/app/create'
+			return
+		end
 
 		if params[:publish] == 'true'
 			body = {
@@ -39,8 +46,18 @@ class Api::AppController < ApplicationController
 				http.request(req)
 			}
 
+			res = ActiveSupport::JSON.decode(res.body)
+
+			if res['code'] != nil
+				session[:toast_type] = 'error';
+				session[:toast_message] = 'There was an error publishing the app. Please try again'
+				redirect_to '/app/list'
+				return
+			end
+
 			session[:toast_type] = 'publish';
 			redirect_to '/app/list'
+			return
 		end
 
 		session[:toast_type] = 'create';
@@ -54,8 +71,6 @@ class Api::AppController < ApplicationController
 			'customData' => params
 		}
 
-		puts params
-
 		url = URI.parse($base_url + '/v2/apps/' + params[:appId] + '/versions/' + params[:version])
 		http = Net::HTTP.new(url.host, url.port)
 		http.use_ssl = true
@@ -68,6 +83,13 @@ class Api::AppController < ApplicationController
 
 		res = ActiveSupport::JSON.decode(res.body)
 
+		if res['code'] != nil
+			session[:toast_type] = 'error'
+			session[:toast_message] = res['errors'][0]['message']
+			redirect_to '/app/update/' + params[:appId] + '/' + params[:version];
+			return
+		end
+
 		if params[:publish] == 'true'
 			body = {
 				'developerId' => $developer_id,
@@ -79,6 +101,15 @@ class Api::AppController < ApplicationController
 			res = Net::HTTP.start(url.host, url.port) { |https|
 				http.request(req)
 			}
+
+			res = ActiveSupport::JSON.decode(res.body)
+
+			if res['code'] != nil
+				session[:toast_type] = 'error';
+				session[:toast_message] = 'There was an error publishing the app. Please try again later'
+				redirect_to '/app/list'
+				return
+			end
 
 			session[:toast_type] = 'publish';
 			redirect_to '/app/list'
@@ -103,6 +134,15 @@ class Api::AppController < ApplicationController
 			http.request(req)
 		}
 
+		res = ActiveSupport::JSON.decode(res.body)
+
+		if res['code'] != nil
+			session[:toast_type] = 'error';
+			session[:toast_message] = 'There was an error publshing the app. Please try again later'
+			redirect_to '/app/list'
+			return
+		end
+
 		session[:toast_type] = 'publish';
 	end
 
@@ -120,6 +160,15 @@ class Api::AppController < ApplicationController
 		res = Net::HTTP.start(url.host, url.port) { |https|
 			http.request(req)
 		}
+
+		res = ActiveSupport::JSON.decode(res.body)
+
+		if res['code'] != nil
+			session[:toast_type] = 'error'
+			session[:toast_message] = res['errors'][0]['message']
+			redirect_to '/app/list'
+			return
+		end
 
 		session[:toast_type] = 'delete';
 	end
@@ -139,6 +188,15 @@ class Api::AppController < ApplicationController
 		res = Net::HTTP.start(url.host, url.port) { |https|
 			http.request(req)
 		}
+		
+		res = ActiveSupport::JSON.decode(res.body)
+
+		if res['code'] != nil
+			session[:toast_type] = 'error'
+			session[:toast_message] = res['errors'][0]['message']
+			redirect_to '/app/list'
+			return
+		end
 
 		session[:toast_type] = 'status'
 		session[:toast_message] = 'App ' + params[:status] + 'ed successfully'
@@ -149,6 +207,5 @@ class Api::AppController < ApplicationController
 
 		result = ActiveSupport::JSON.decode( RestClient.post($base_url + '/v2/files', { :file => File.new(file.path) }, { :Authorization => $auth }) )
 		render :plain => result['fileUrl']
-
 	end
 end
