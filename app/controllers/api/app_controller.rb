@@ -3,10 +3,6 @@ class Api::AppController < ApplicationController
 	require 'net/http'
 	require 'rest-client'
 
-	def list
-
-	end
-
 	def create
 
 		body = {

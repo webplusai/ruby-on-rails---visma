@@ -1,9 +1,14 @@
 <section class="statistics">
 	<div class="container section-container">
-		<div class="error-panel">
-			<i class="fa fa-exclamation-circle"> </i>
-			<span> Drafts must be published before they can be listed on the marketplace. </span>
-		</div>
+		<% @apps.each do |app| %>
+			<% if app['status']['value'] == 'inDevelopment' %>
+				<div class="error-panel">
+					<i class="fa fa-exclamation-circle"> </i>
+					<span> Drafts must be published before they can be listed on the marketplace. </span>
+				</div>
+				<% break %>
+			<% end %>
+		<% end %>
 		<h1>
 			<i class="fa fa-search"> </i>
 			<span> <%= @views.to_i %> Views </span>
