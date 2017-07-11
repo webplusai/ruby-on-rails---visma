@@ -32,81 +32,87 @@
 		<div class="container">
 			<div class="card-group">
 				<div class="row">
-					<% @apps.each do |app| %>
-						<div class="col-md-6">
-							<div class="card">
-								<div class="card-overlay text-center">
-									<div class="card-overlay-panel">
-										<a class="btn btn-see-through" data-toggle="tooltip" title="Edit" href="/app/update/<%= app['appId'] %>/<%= app['version'] %>">
-											<i class="fa fa-pencil"> </i>
-										</a>
-										<% if app['status']['value'] == 'inDevelopment' %>
-											<a class="btn btn-see-through" data-toggle="tooltip" title="Publish" onclick="showPublishDialog('<%= app['appId'] %>', '<%= app['version'] %>')">
-												<i class="fa fa-rocket"> </i>
+					<% if @apps.length == 0 %>
+						<div class="no-results-card">
+							You don't have any apps yet.
+						</div>
+					<% else %>
+						<% @apps.each do |app| %>
+							<div class="col-md-6">
+								<div class="card">
+									<div class="card-overlay text-center">
+										<div class="card-overlay-panel">
+											<a class="btn btn-see-through" data-toggle="tooltip" title="Edit" href="/app/update/<%= app['appId'] %>/<%= app['version'] %>">
+												<i class="fa fa-pencil"> </i>
 											</a>
-										<% end %>
-										<a class="btn btn-see-through" data-toggle="tooltip" title="Preview" href="http://visma-market.openchannel.io/details/<%= app['appId'] %>/<%= app['version'] %>" target="_blank">
-											<i class="fa fa-search"> </i>
-										</a>
-										<% if app['status']['value'] == 'approved' %>
-											<% if app['parent']['status']['value'] == 'approved' %>
-												<a class="btn btn-see-through" data-toggle="tooltip" title="Suspend" onclick="showSuspendDialog('<%= app['appId'] %>', 'suspend')">
-													<i class="fa fa-pause"> </i>
-												</a>
-											<% elsif app['parent']['status']['value'] == 'suspended' && app['parent']['status']['modifiedBy'] == 'developer' %>
-												<a class="btn btn-see-through" data-toggle="tooltip" title="Unsuspend" onclick="showSuspendDialog('<%= app['appId'] %>', 'unsuspend')">
-													<i class="fa fa-play"> </i>
+											<% if app['status']['value'] == 'inDevelopment' %>
+												<a class="btn btn-see-through" data-toggle="tooltip" title="Publish" onclick="showPublishDialog('<%= app['appId'] %>', '<%= app['version'] %>')">
+													<i class="fa fa-rocket"> </i>
 												</a>
 											<% end %>
-										<% end %>
-										<a class="btn btn-see-through" data-toggle="tooltip" title="Delete" onclick="showDeleteDialog('<%= app['appId'] %>', '<%= app['version'] %>', '<%= app['status']['value'] %>')">
-											<i class="fa fa-trash"> </i>
-										</a>
-									</div>
-								</div>
-								<% if app['status']['value'] == 'approved' %>
-									<div class="<%= app['parent']['status']['value'] %> card-status text-center">
-										<% if app['parent']['status']['value'] == 'approved' %>
-											<span> Approved </span>
-										<% else %>
-											<span> Suspended </span>
-										<% end %>
-									</div>
-								<% else %>
-									<div class="<%= app['status']['value'] %> card-status text-center">
-										<% case app['status']['value']
-											when 'inDevelopment' %>
-											<span> Draft </span>
-										<% when 'inReview' %>
-											<span> In Review </span>
-										<% when 'pending' %>
-											<span> Pending Approval </span>
-										<% when 'suspended' %>
-											<span> Suspended </span>
-										<% when 'rejected' %>
-											<span> Rejected </span>
-										<% end %>
-									</div>
-								<% end %>
-								<div class="card-content">
-									<div class="row">
-										<div class="col-md-4">
-											<div class="card-image">
-												<img src="<%= app['customData']['icon'] %>">
-											</div>
+											<a class="btn btn-see-through" data-toggle="tooltip" title="Preview" href="http://visma-market.openchannel.io/details/<%= app['appId'] %>/<%= app['version'] %>" target="_blank">
+												<i class="fa fa-search"> </i>
+											</a>
+											<% if app['status']['value'] == 'approved' %>
+												<% if app['parent']['status']['value'] == 'approved' %>
+													<a class="btn btn-see-through" data-toggle="tooltip" title="Suspend" onclick="showSuspendDialog('<%= app['appId'] %>', 'suspend')">
+														<i class="fa fa-pause"> </i>
+													</a>
+												<% elsif app['parent']['status']['value'] == 'suspended' && app['parent']['status']['modifiedBy'] == 'developer' %>
+													<a class="btn btn-see-through" data-toggle="tooltip" title="Unsuspend" onclick="showSuspendDialog('<%= app['appId'] %>', 'unsuspend')">
+														<i class="fa fa-play"> </i>
+													</a>
+												<% end %>
+											<% end %>
+											<a class="btn btn-see-through" data-toggle="tooltip" title="Delete" onclick="showDeleteDialog('<%= app['appId'] %>', '<%= app['version'] %>', '<%= app['status']['value'] %>')">
+												<i class="fa fa-trash"> </i>
+											</a>
 										</div>
-										<div class="col-md-8">
-											<div class="card-title">
-												<%= app['name'] %>
+									</div>
+									<% if app['status']['value'] == 'approved' %>
+										<div class="<%= app['parent']['status']['value'] %> card-status text-center">
+											<% if app['parent']['status']['value'] == 'approved' %>
+												<span> Approved </span>
+											<% else %>
+												<span> Suspended </span>
+											<% end %>
+										</div>
+									<% else %>
+										<div class="<%= app['status']['value'] %> card-status text-center">
+											<% case app['status']['value']
+												when 'inDevelopment' %>
+												<span> Draft </span>
+											<% when 'inReview' %>
+												<span> In Review </span>
+											<% when 'pending' %>
+												<span> Pending Approval </span>
+											<% when 'suspended' %>
+												<span> Suspended </span>
+											<% when 'rejected' %>
+												<span> Rejected </span>
+											<% end %>
+										</div>
+									<% end %>
+									<div class="card-content">
+										<div class="row">
+											<div class="col-md-4">
+												<div class="card-image">
+													<img src="<%= app['customData']['icon'] %>">
+												</div>
 											</div>
-											<div class="card-summary">
-												<%= app['customData']['summary'] %>
+											<div class="col-md-8">
+												<div class="card-title">
+													<%= app['name'] %>
+												</div>
+												<div class="card-summary">
+													<%= app['customData']['summary'] %>
+												</div>
 											</div>
 										</div>
 									</div>
 								</div>
 							</div>
-						</div>
+						<% end %>
 					<% end %>
 				</div>
 			</div>
